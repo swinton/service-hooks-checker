@@ -1,5 +1,5 @@
 {
-  "name": "services-deprecation-check",
+  "name": "service-hooks-checker",
   "version": "1.0.0",
   "description": "",
   "author": "Steve Winton <stevewinton@gmail.com> (https://github.com/swinton)",
