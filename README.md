@@ -1,5 +1,3 @@
-# JavaScript
+# Service Hooks Checker
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-
-How I JavaScript.
+Checks organization-owned repos for instances of any [deprecated service hooks](https://developer.github.com/changes/2018-04-25-github-services-deprecation/).
