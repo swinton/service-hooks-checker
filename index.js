@@ -44,14 +44,27 @@ const config = require('./config');
   const repos = await octokit.paginate(reposForOrg, response => response.data.map(repo => repo.name));
 
   // Lookup repos with service hooks
-  const reposWithHooks = repos.map(repo => {
-    // List hooks
-    // GET /repos/:owner/:repo/hooks
-    const hooksForRepo = octokit.repos.listHooks.endpoint.merge({
-      owner: config.github.app.installation.organization.name,
-      repo
-    });
-    return { [repo]: octokit.paginate(hooksForRepo, response => response.data.map(hook => hook.name)) };
+  const reposWithHooks = await Promise.all(
+    repos.map(async repo => {
+      // List hooks
+      // GET /repos/:owner/:repo/hooks
+      const hooksForRepo = octokit.repos.listHooks.endpoint.merge({
+        owner: config.github.app.installation.organization.name,
+        repo
+      });
+      const hooks = await octokit.paginate(hooksForRepo);
+      return { repo, hooks };
+    })
+  );
+
+  // Filter out "web" hooks
+  let reposWithServiceHooks = reposWithHooks.map(repo => {
+    repo.hooks = repo.hooks.filter(hook => hook.name !== 'web');
+    return repo;
   });
-  console.log('reposWithHooks: %j', reposWithHooks);
+
+  // Filter out repos with "no" hooks
+  reposWithServiceHooks = reposWithServiceHooks.filter(repo => repo.hooks.length > 0);
+
+  console.log('%j', reposWithServiceHooks);
 })();
