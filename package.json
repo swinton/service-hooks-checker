@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "author": "Steve Winton <stevewinton@gmail.com> (https://github.com/swinton)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swinton/service-hooks-checker.git"
+  },
   "main": "index.js",
   "license": "ISC",
   "keywords": [],
