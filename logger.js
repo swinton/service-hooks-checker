@@ -39,7 +39,7 @@ Logger.prototype.wrap = function() {
 const logger = new Logger({
   name: 'service-hooks-checker',
   level: process.env.LOG_LEVEL || 'info',
-  stream: bunyanFormat({ outputMode: process.env.LOG_FORMAT || 'short' })
+  stream: bunyanFormat({ outputMode: process.env.LOG_FORMAT || 'short' }, process.stderr)
 });
 
 module.exports = logger;
