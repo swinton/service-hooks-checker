@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "author": "Steve Winton <stevewinton@gmail.com> (https://github.com/swinton)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swinton/service-hooks-checker.git"
+  },
   "main": "index.js",
   "license": "ISC",
   "keywords": [],
@@ -14,8 +18,11 @@
   },
   "dependencies": {
     "@octokit/rest": "^16.0.1",
+    "bunyan": "^1.8.12",
+    "bunyan-format": "^0.2.1",
     "dotenv": "^6.1.0",
-    "jsonwebtoken": "^8.4.0"
+    "jsonwebtoken": "^8.4.0",
+    "supports-color": "^5.5.0"
   },
   "devDependencies": {
     "eslint": "^5.5.0",
