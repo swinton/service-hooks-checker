@@ -77,3 +77,6 @@ typings/
 
 # GitHub Apps private key file
 *.pem
+
+# Local temp folder for post-processing of data
+tmp
