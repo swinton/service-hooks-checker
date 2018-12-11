@@ -1,7 +1,9 @@
 const octokit = require('@octokit/rest')();
 const jsonwebtoken = require('jsonwebtoken');
+const PromisePool = require('es6-promise-pool');
 const config = require('./config');
 const logger = require('./logger');
+const hookRetriever = require('./hook-retriever');
 
 (async () => {
   // Authenticate as GitHub App
@@ -50,19 +52,17 @@ const logger = require('./logger');
   logger.info(`Found ${repos.length} repos`);
 
   // Lookup repos with service hooks
-  const reposWithHooks = await Promise.all(
-    repos.map(async repo => {
-      // List hooks
-      // GET /repos/:owner/:repo/hooks
-      logger.info(`Getting hooks for "${repo}" repo...`);
-      const hooksForRepo = octokit.repos.listHooks.endpoint.merge({
-        owner: config.github.app.installation.organization.name,
-        repo
-      });
-      const hooks = await octokit.paginate(hooksForRepo);
-      return { repo, hooks };
-    })
-  );
+  // Use a promise pool to limit concurrency
+  const promiseIterator = hookRetriever(config.github.app.installation.organization.name, repos, octokit, logger);
+  const pool = new PromisePool(promiseIterator, 3);
+  const reposWithHooks = [];
+  pool.addEventListener('fulfilled', event => {
+    if (event.data.result.hooks.length > 0) {
+      logger.info(`Got ${event.data.result.hooks.length} hooks for "${event.data.result.repo}" repo...`);
+      reposWithHooks.push(event.data.result);
+    }
+  });
+  await pool.start();
 
   // Filter out "web" hooks
   logger.info(`Filtering out "web" repo hooks...`);
@@ -75,5 +75,14 @@ const logger = require('./logger');
   logger.info(`Filtering out repos with "no" hooks...`);
   reposWithServiceHooks = reposWithServiceHooks.filter(repo => repo.hooks.length > 0);
 
-  console.log('%j', reposWithServiceHooks);
+  // Write results to STDOUT in some kind of usable form, e.g. Markdown table
+  console.log('| repo | hook |');
+  console.log('---------------');
+  reposWithServiceHooks.forEach(row => {
+    row.hooks.forEach(hook => {
+      console.log(
+        `| https://github.com/${config.github.app.installation.organization.name}/${row.repo} | ${hook.name} |`
+      );
+    });
+  });
 })();

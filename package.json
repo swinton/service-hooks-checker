@@ -21,6 +21,7 @@
     "bunyan": "^1.8.12",
     "bunyan-format": "^0.2.1",
     "dotenv": "^6.1.0",
+    "es6-promise-pool": "^2.5.0",
     "jsonwebtoken": "^8.4.0",
     "supports-color": "^5.5.0"
   },
