@@ -80,7 +80,9 @@ const hookRetriever = require('./hook-retriever');
   console.log('---------------');
   reposWithServiceHooks.forEach(row => {
     row.hooks.forEach(hook => {
-      console.log(`| https://github.com/modolabs/${row.repo} | ${hook.name} |`);
+      console.log(
+        `| https://github.com/${config.github.app.installation.organization.name}/${row.repo} | ${hook.name} |`
+      );
     });
   });
 })();
