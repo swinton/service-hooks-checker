@@ -66,10 +66,21 @@ const hookRetriever = require('./hook-retriever');
 
   // Filter out "web" hooks
   logger.info(`Filtering out "web" repo hooks...`);
-  const reposWithServiceHooks = reposWithHooks.map(repo => {
+  let reposWithServiceHooks = reposWithHooks.map(repo => {
     repo.hooks = repo.hooks.filter(hook => hook.name !== 'web');
     return repo;
   });
 
-  console.log('%j', reposWithServiceHooks);
+  // Filter out repos with "no" hooks
+  logger.info(`Filtering out repos with "no" hooks...`);
+  reposWithServiceHooks = reposWithServiceHooks.filter(repo => repo.hooks.length > 0);
+
+  // Write results to STDOUT in some kind of usable form, e.g. Markdown table
+  console.log('| repo | hook |');
+  console.log('---------------');
+  reposWithServiceHooks.forEach(row => {
+    row.hooks.forEach(hook => {
+      console.log(`| https://github.com/modolabs/${row.repo} | ${hook.name} |`);
+    });
+  });
 })();
